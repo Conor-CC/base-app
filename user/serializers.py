@@ -1,16 +1,16 @@
+from authentication.authenticators import TokenAuthentication
 from user.models import UserModel_Base, UserModel_ProfileTypeOne
 from rest_framework import serializers
-from dj_rest_auth.registration.serializers import RegisterSerializer
 
-
-class UserSerializer_Create(RegisterSerializer):
-    first_name = serializers.CharField(required=True, write_only=True)
-    last_name = serializers.CharField(required=True, write_only=True)
-    organization = serializers.CharField(required=True, write_only=True)
-
-    class Meta:
-        model = UserModel_Base
-        fields = ['first_name', 'last_name', 'organization', 'user_type']
+class UserSerializer_Create(serializers.Serializer):
+    username = serializers.CharField(required=True, allow_blank=False)
+    email = serializers.EmailField(required=True, allow_blank=False)
+    first_name = serializers.CharField(required=True, allow_blank=False, write_only=True)
+    last_name = serializers.CharField(required=True, allow_blank=False, write_only=True)
+    organization = serializers.CharField(required=True, allow_blank=False, write_only=True)
+    user_type = serializers.ChoiceField(required=True, choices=UserModel_Base.USER_TYPE_CHOICES)
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
         user_obj = UserModel_Base(
@@ -84,6 +84,7 @@ class UserTypeOneSerializer_Create(serializers.ModelSerializer):
         user_obj = UserSerializer_Create.create(UserSerializer_Create,
                                                 validated_data=user_data)
         user_obj.save()
+        TokenAuthentication._create_token(user_obj)
         userTypeOne = UserModel_ProfileTypeOne(
                                   user=user_obj,
                                   info_user_type_one=validated_data['info_user_type_one']
@@ -91,7 +92,7 @@ class UserTypeOneSerializer_Create(serializers.ModelSerializer):
         userTypeOne.save()
         return userTypeOne
 
-    def save(self, request):
+    def save(self):
         return self.create(self.validated_data)
 
 
