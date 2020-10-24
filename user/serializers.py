@@ -1,4 +1,4 @@
-from user.models import User, UserTypeOne
+from user.models import UserModel_Base, UserModel_ProfileTypeOne
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
 
@@ -9,11 +9,11 @@ class UserSerializer_Create(RegisterSerializer):
     organization = serializers.CharField(required=True, write_only=True)
 
     class Meta:
-        model = User
+        model = UserModel_Base
         fields = ['first_name', 'last_name', 'organization', 'user_type']
 
     def create(self, validated_data):
-        user_obj = User(
+        user_obj = UserModel_Base(
             email=validated_data['email'],
             username=validated_data['username'],
             first_name=validated_data['first_name'],
@@ -27,7 +27,7 @@ class UserSerializer_Create(RegisterSerializer):
 
 class UserSerializer_RetrieveUpdateDestroy(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserModel_Base
         fields = ['id', 'email', 'username', 'first_name',
                   'last_name', 'organization', 'user_type']
 
@@ -58,7 +58,7 @@ class UserSerializer_RetrieveUpdateDestroy(serializers.ModelSerializer):
 
 class UserSerializer_List(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserModel_Base
         fields = ['id', 'email', 'username', 'user_type', 'first_name',
                   'last_name', 'organization', 'created_on', 'updated_on']
 
@@ -69,7 +69,7 @@ class UserTypeOneSerializer_Create(serializers.ModelSerializer):
     user = UserSerializer_Create(required=True)
 
     class Meta:
-        model = UserTypeOne
+        model = UserModel_ProfileTypeOne
         fields = ['user', 'info_user_type_one']
 
     def validate_info_user_type_one(self, info_user_type_one):
@@ -80,11 +80,11 @@ class UserTypeOneSerializer_Create(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data['user']
-        user_data['user_type'] = User.USER_TYPE_ONE
+        user_data['user_type'] = UserModel_Base.USER_TYPE_ONE
         user_obj = UserSerializer_Create.create(UserSerializer_Create,
                                                 validated_data=user_data)
         user_obj.save()
-        userTypeOne = UserTypeOne(
+        userTypeOne = UserModel_ProfileTypeOne(
                                   user=user_obj,
                                   info_user_type_one=validated_data['info_user_type_one']
                                  )
@@ -99,7 +99,7 @@ class UserTypeOneSerializer_List(serializers.ModelSerializer):
     user = UserSerializer_List(required=True)
 
     class Meta:
-        model = UserTypeOne
+        model = UserModel_ProfileTypeOne
         fields = ['user', 'info_user_type_one']
 
     def validate_info_user_type_one(self, info_user_type_one):
@@ -119,7 +119,7 @@ class UserTypeOneSerializer_RetrieveUpdateDestroy(serializers.ModelSerializer):
     user = UserSerializer_RetrieveUpdateDestroy(required=True)
 
     class Meta:
-        model = UserTypeOne
+        model = UserModel_ProfileTypeOne
         fields = ['user', 'info_user_type_one']
 
     def validate_info_user_type_one(self, info_user_type_one):

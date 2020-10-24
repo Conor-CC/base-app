@@ -15,11 +15,11 @@ class User_Model(TestCase):
         self.user_c = TestBase.USER_C
 
     def create_user(self, data):
-        return m.User.objects.create(**data)
+        return m.UserModel_Base.objects.create(**data)
 
     def get_user_by_id(self, id):
         try:
-            return m.User.objects.get(id=id)
+            return m.UserModel_Base.objects.get(id=id)
         except Exception as e:
             raise e
 
@@ -64,8 +64,8 @@ class User_Model(TestCase):
             self.fail(e)
 
         user_a.delete()
-        with self.assertRaises(m.User.DoesNotExist):
-            m.User.objects.get(id=user_obj.id)
+        with self.assertRaises(m.UserModel_Base.DoesNotExist):
+            m.UserModel_Base.objects.get(id=user_obj.id)
 
     def test_user_update(self):
         """
