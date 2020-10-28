@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_rest_passwordreset',
+    'rest_framework_swagger',
 
     'user',
     'authentication',
@@ -137,7 +138,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'authentication.authenticators.TokenAuthentication',
     ],
-    'TOKEN_EXPIRY_TIME_SEC': 43200 # 12 hours in seconds
+    'TOKEN_EXPIRY_TIME_SEC': 43200,  # 12 hours in seconds
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 # Internationalization
