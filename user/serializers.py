@@ -1,4 +1,4 @@
-from authentication.authenticators import TokenAuthentication
+from authentication.token_auth.authenticators import TokenAuthentication
 from user.models import UserModel_Base, UserModel_ProfileTypeOne
 from rest_framework import serializers
 
